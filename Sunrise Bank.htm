@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunrise Bank</title>
+  <style>
+    :root {
+      --primary: #0a2342;
+      --primary-2: #12385f;
+      --accent: #f5793b;
+      --gold: #ffc857;
+      --mint: #0f766e;
+      --red: #b42318;
+      --ink: #172433;
+      --muted: #627386;
+      --line: #d9e3ec;
+      --surface: #ffffff;
+      --surface-2: #f4f8fb;
+      --surface-3: #e7f0f6;
+      --shadow: 0 16px 40px rgba(10, 35, 66, 0.14);
+      --radius: 8px;
+      --container: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--surface-2);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    body.menu-open { overflow: hidden; }
+    a { color: inherit; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    img { display: block; max-width: 100%; }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -3rem;
+      z-index: 9999;
+      background: var(--gold);
+      color: var(--primary);
+      padding: 0.65rem 0.9rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      text-decoration: none;
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus { top: 1rem; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10, 35, 66, 0.96);
+      color: #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-shell {
+      width: min(100% - 2rem, var(--container));
+      min-height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 28%, #fff8d8 0 14%, var(--gold) 15% 58%, var(--accent) 59% 100%);
+      box-shadow: 0 0 0 6px rgba(255, 200, 87, 0.18);
+    }
+
+    .brand-text { display: grid; gap: 0.05rem; }
+    .brand-name { font-size: 1.14rem; line-height: 1.05; }
+
+    .brand-kicker {
+      color: #bdd0df;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-toggle span,
+    .menu-toggle span::before,
+    .menu-toggle span::after {
+      display: block;
+      width: 19px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      content: "";
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .menu-toggle span::before { transform: translateY(-6px); }
+    .menu-toggle span::after { transform: translateY(4px); }
+    .menu-toggle[aria-expanded="true"] span { transform: rotate(45deg); }
+    .menu-toggle[aria-expanded="true"] span::before { transform: translateY(0) rotate(90deg); }
+    .menu-toggle[aria-expanded="true"] span::after { opacity: 0; }
+
+    .primary-nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .primary-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.5rem 0.8rem;
+      border-radius: var(--radius);
+      color: #e9f1f7;
+      font-size: 0.94rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .primary-nav a:hover,
+    .primary-nav a:focus-visible {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--gold);
+      outline: none;
+    }
+
+    .nav-action {
+      background: var(--accent);
+      color: #fff !important;
+      margin-left: 0.35rem;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 68svh;
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .hero-media,
+    .hero-media img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-media img {
+      object-fit: cover;
+      object-position: center;
+      filter: saturate(1.05);
+    }
+
+    .hero::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+      background:
+        linear-gradient(90deg, rgba(7, 20, 38, 0.82) 0%, rgba(10, 35, 66, 0.55) 48%, rgba(10, 35, 66, 0.18) 100%),
+        linear-gradient(0deg, rgba(7, 20, 38, 0.28), rgba(7, 20, 38, 0.02));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2rem, var(--container));
+      margin: 0 auto;
+      padding: 3rem 0 2.2rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      margin: 0 0 1rem;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 999px;
+      color: #fff4ca;
+      background: rgba(10, 35, 66, 0.48);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 780px;
+      margin-bottom: 1rem;
+      font-size: 3.85rem;
+      line-height: 0.98;
+    }
+
+    .hero-copy {
+      max-width: 610px;
+      margin-bottom: 1.6rem;
+      color: #dceaf4;
+      font-size: 1.18rem;
+    }
+
+    .hero-actions,
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 46px;
+      padding: 0.72rem 1rem;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(10, 35, 66, 0.18);
+      outline: none;
+    }
+
+    .btn.secondary {
+      border-color: rgba(255, 255, 255, 0.38);
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .btn.ghost {
+      border-color: var(--line);
+      background: #fff;
+      color: var(--primary);
+    }
+
+    .btn.full { width: 100%; }
+
+    .container {
+      width: min(100% - 2rem, var(--container));
+      margin: 0 auto;
+    }
+
+    section { padding: 5rem 0; }
+
+    .section-head {
+      display: grid;
+      gap: 0.55rem;
+      max-width: 760px;
+      margin-bottom: 2rem;
+    }
+
+    .section-head.center { margin-inline: auto; text-align: center; }
+
+    .section-label {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 0;
+      color: var(--primary);
+      font-size: 2.75rem;
+      line-height: 1.08;
+    }
+
+    .section-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .quick-actions {
+      margin-top: -3rem;
+      position: relative;
+      z-index: 3;
+      padding: 0;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .quick-card,
+    .service-card,
+    .account-card,
+    .panel,
+    .login-panel,
+    .contact-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .quick-card {
+      display: grid;
+      gap: 0.4rem;
+      min-height: 138px;
+      padding: 1.1rem;
+      text-decoration: none;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .quick-card:hover,
+    .quick-card:focus-visible {
+      transform: translateY(-3px);
+      border-color: rgba(245, 121, 59, 0.55);
+      outline: none;
+    }
+
+    .quick-icon,
+    .service-icon,
+    .status-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius);
+      background: var(--surface-3);
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .quick-card strong,
+    .service-card h3,
+    .account-card h3,
+    .panel h3 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 1.03rem;
+      line-height: 1.25;
+    }
+
+    .quick-card span:last-child,
+    .service-card p,
+    .account-card p,
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .services { background: var(--surface-2); }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .service-card {
+      display: grid;
+      gap: 0.8rem;
+      padding: 1.25rem;
+      box-shadow: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(10, 35, 66, 0.1);
+    }
+
+    .dashboard {
+      color: #fff;
+      background: linear-gradient(135deg, #071a31 0%, var(--primary) 48%, #144d5a 100%);
+    }
+
+    .dashboard .section-title,
+    .dashboard .section-label { color: #fff; }
+    .dashboard .section-copy { color: #c5d7e4; }
+
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .balance-panel {
+      padding: 1.35rem;
+      background: #fff;
+      color: var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .balance-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .balance-label {
+      margin-bottom: 0.2rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .balance {
+      margin: 0;
+      color: var(--mint);
+      font-size: 3.9rem;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .account-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .account-card { padding: 1rem; box-shadow: none; }
+
+    .account-value {
+      color: var(--primary);
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .side-stack { display: grid; gap: 1rem; }
+
+    .panel {
+      padding: 1.15rem;
+      box-shadow: var(--shadow);
+      color: var(--ink);
+    }
+
+    .locked-panel {
+      display: grid;
+      gap: 0.8rem;
+      max-width: 720px;
+      padding: 1.25rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      box-shadow: var(--shadow);
+    }
+
+    .locked-panel h3 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .locked-panel p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    body:not(.is-signed-in) .protected-content {
+      display: none;
+    }
+
+    body.is-signed-in .locked-panel {
+      display: none;
+    }
+
+    .field-grid {
+      display: grid;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .field { display: grid; gap: 0.35rem; }
+
+    label {
+      color: var(--primary);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #cad7e3;
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      padding: 0.68rem 0.78rem;
+    }
+
+    textarea { resize: vertical; min-height: 132px; }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary-2);
+      box-shadow: 0 0 0 3px rgba(18, 56, 95, 0.14);
+      outline: none;
+    }
+
+    .form-note,
+    .message {
+      min-height: 24px;
+      margin: 0.7rem 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .message.success { color: var(--mint); }
+    .message.warning { color: #8a4a00; }
+    .message.error { color: var(--red); }
+
+    .transactions { background: var(--surface); }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.5fr minmax(180px, 0.6fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 0.95rem 1rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+    }
+
+    tbody tr:last-child td { border-bottom: 0; }
+    .amount-credit { color: var(--mint); font-weight: 800; }
+    .amount-debit { color: var(--red); font-weight: 800; }
+
+    .planning { background: var(--surface-3); }
+
+    .planning-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .result-box {
+      display: grid;
+      place-items: center;
+      min-height: 250px;
+      padding: 1.5rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      text-align: center;
+    }
+
+    .result-value {
+      color: var(--primary);
+      font-size: 3.25rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .login-contact { background: var(--surface-2); }
+
+    .login-contact-grid {
+      display: grid;
+      grid-template-columns: minmax(310px, 0.8fr) minmax(0, 1.2fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .login-panel,
+    .contact-panel {
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .status-list {
+      display: grid;
+      gap: 0.8rem;
+      margin: 1rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .status-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      color: var(--muted);
+    }
+
+    .status-icon {
+      flex: 0 0 34px;
+      width: 34px;
+      height: 34px;
+      background: #ecf8f5;
+      color: var(--mint);
+    }
+
+    .footer {
+      padding: 2rem 0;
+      color: #dbe8f1;
+      background: #06182d;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .footer h2 {
+      margin: 0 0 0.45rem;
+      color: #fff;
+      font-size: 1.35rem;
+    }
+
+    .footer p { margin: 0.15rem 0; }
+    .footer small { display: block; color: #a8becd; text-align: right; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 960px) {
+      .quick-grid,
+      .service-grid,
+      .account-grid,
+      .dashboard-layout,
+      .planning-grid,
+      .login-contact-grid,
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .dashboard-layout,
+      .planning-grid,
+      .login-contact-grid,
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer small { text-align: left; }
+      h1 { font-size: 3.35rem; }
+      .hero-content { padding: 2.8rem 0 2.2rem; }
+      .section-title { font-size: 2.35rem; }
+      .balance { font-size: 3.25rem; }
+      .result-value { font-size: 2.75rem; }
+      section { padding: 4rem 0; }
+    }
+
+    @media (max-width: 760px) {
+      .nav-shell { min-height: 64px; }
+      .menu-toggle { display: inline-flex; }
+      .primary-nav {
+        position: fixed;
+        inset: 64px 0 auto 0;
+        display: none;
+        padding: 1rem;
+        background: var(--primary);
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 22px 45px rgba(0, 0, 0, 0.28);
+      }
+      .primary-nav.open { display: block; }
+      .primary-nav ul { display: grid; gap: 0.35rem; }
+      .primary-nav a { width: 100%; justify-content: center; }
+      .nav-action { margin-left: 0; }
+      .hero { min-height: auto; }
+      .quick-actions { margin-top: 0; padding-top: 1rem; }
+      .quick-grid,
+      .service-grid,
+      .account-grid,
+      .field-row,
+      .toolbar { grid-template-columns: 1fr; }
+      .balance-top { display: grid; }
+      h1 { font-size: 2.85rem; }
+      .hero-copy { font-size: 1.05rem; }
+      .hero-content { padding: 2.7rem 0 2.2rem; }
+    }
+
+    @media (max-width: 520px) {
+      .container,
+      .nav-shell,
+      .hero-content { width: min(100% - 1.25rem, var(--container)); }
+      .brand-kicker { display: none; }
+      .hero-actions,
+      .button-row { display: grid; }
+      .btn { width: 100%; }
+      h1 { font-size: 2.55rem; }
+      .section-title { font-size: 2rem; }
+      .balance { font-size: 2.65rem; }
+      .result-value { font-size: 2.3rem; }
+      section { padding: 3rem 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="#home" aria-label="Sunrise Bank home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <span class="brand-name">Sunrise Bank</span>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
+        <span aria-hidden="true"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Primary navigation">
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#dashboard">Dashboard</a></li>
+          <li><a href="#transactions">Transactions</a></li>
+          <li><a href="#planning">Planning</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a class="nav-action" href="#login">Sign In</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="hero-media" aria-hidden="true">
+        <img src="Sunrise%20Bank_files/sunrise-bank-hero_rqvy.png" alt="" width="1600" height="900" loading="eager" decoding="async">
+      </div>
+      <div class="hero-content">
+        <p class="eyebrow">Online Banking</p>
+        <h1 id="hero-title">Banking with the promise of a brighter tomorrow.</h1>
+        <p class="hero-copy">Explore our modern online banking platform with secure account access, financial planning tools, and personalized services.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#login">Sign In <span aria-hidden="true">→</span></a>
+          <a class="btn secondary" href="#services">Explore Services</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick-actions" aria-label="Quick actions">
+      <div class="container">
+        <div class="quick-grid">
+          <a class="quick-card" href="#transfer-form"><span class="quick-icon" aria-hidden="true">$</span><strong>Move Money</strong><span>Transfer between accounts.</span></a>
+          <a class="quick-card" href="#transactions"><span class="quick-icon" aria-hidden="true">#</span><strong>Review Activity</strong><span>View account history.</span></a>
+          <a class="quick-card" href="#planning"><span class="quick-icon" aria-hidden="true">%</span><strong>Plan Savings</strong><span>Calculate savings goals.</span></a>
+          <a class="quick-card" href="#contact"><span class="quick-icon" aria-hidden="true">?</span><strong>Get Support</strong><span>Contact customer service.</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="services" id="services" aria-labelledby="services-title">
+      <div class="container">
+        <div class="section-head center">
+          <p class="section-label">Our services</p>
+          <h2 class="section-title" id="services-title">Comprehensive banking solutions.</h2>
+          <p class="section-copy">We offer a wide range of financial products and services tailored to meet your personal and business needs.</p>
+        </div>
+
+        <div class="service-grid">
+          <article class="service-card"><span class="service-icon" aria-hidden="true">P</span><h3>Personal Banking</h3><p>Checking, savings, and investment accounts with competitive rates and convenient access.</p></article>
+          <article class="service-card"><span class="service-icon" aria-hidden="true">B</span><h3>Business Banking</h3><p>Specialized solutions for businesses of all sizes including loans, credit, and cash management.</p></article>
+          <article class="service-card"><span class="service-icon" aria-hidden="true">H</span><h3>Home Loans</h3><p>Flexible mortgage options with competitive rates for purchasing or refinancing your home.</p></article>
+          <article class="service-card"><span class="service-icon" aria-hidden="true">C</span><h3>Credit Cards</h3><p>Reward programs, low interest rates, and security features for everyday purchases.</p></article>
+          <article class="service-card"><span class="service-icon" aria-hidden="true">I</span><h3>Investments</h3><p>Professional investment management and retirement planning services.</p></article>
+          <article class="service-card"><span class="service-icon" aria-hidden="true">M</span><h3>Mobile Banking</h3><p>Bank on the go with our award-winning mobile app for all your financial needs.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard" id="dashboard" aria-labelledby="dashboard-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-label">Customer dashboard</p>
+          <h2 class="section-title" id="dashboard-title">Your financial overview.</h2>
+          <p class="section-copy">Access your account information, manage transactions, and track your financial goals.</p>
+        </div>
+
+        <div class="locked-panel" id="account-lock">
+          <h3>Sign in to view account details</h3>
+          <p>Please sign in to access your account balances, transactions, and other personalized information.</p>
+          <a class="btn ghost" href="#login">Go to Sign In</a>
+        </div>
+
+        <div class="protected-content">
+        <div class="dashboard-layout">
+          <div class="balance-panel">
+            <div class="balance-top">
+              <div><p class="balance-label">Available balance</p><p class="balance" id="available-balance">$101,432,098.00</p><p class="form-note">Stock balance: $101,432,098.00</p><p class="form-note">Last updated: June 27, 2026</p></div>
+            </div>
+            <div class="account-grid" aria-label="Account summary">
+              <article class="account-card"><h3>Checking</h3><p>Account ****9361</p><p class="account-value">$14,500.00</p></article>
+              <article class="account-card"><h3>Savings</h3><p>Account ****5678</p><p class="account-value">$10,350.00</p></article>
+              <article class="account-card"><h3>Credit Card</h3><p>Available credit</p><p class="account-value">$8,000</p></article>
+            </div>
+          </div>
+
+          <div class="side-stack">
+            <form class="panel" id="transfer-form">
+              <h3>Transfer Funds</h3>
+              <p>Move money between your accounts securely.</p>
+              <div class="field-grid">
+                <div class="field-row">
+                  <div class="field"><label for="from-account">From</label><select id="from-account" name="from-account"><option selected="selected">Checking ****9361</option><option>Savings ****5678</option></select></div>
+                  <div class="field"><label for="to-account">To</label><select id="to-account" name="to-account"><option selected="selected">Savings ****5678</option><option>Checking ****9361</option></select></div>
+                </div>
+                <div class="field"><label for="transfer-amount">Amount</label><input id="transfer-amount" name="transfer-amount" type="number" min="1" max="5000" step="1" value="250"></div>
+                <button class="btn full" type="submit">Transfer Funds</button>
+                <p class="message" id="transfer-message" aria-live="polite"></p>
+              </div>
+            </form>
+
+            <div class="panel">
+              <h3>Security Features</h3>
+              <ul class="status-list">
+                <li><span class="status-icon" aria-hidden="true">1</span><span>256-bit SSL encryption</span></li>
+                <li><span class="status-icon" aria-hidden="true">2</span><span>Multi-factor authentication</span></li>
+                <li><span class="status-icon" aria-hidden="true">3</span><span>Fraud monitoring</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="transactions" id="transactions" aria-labelledby="transactions-title">
+      <div class="container">
+        <div class="section-head"><p class="section-label">Recent activity</p><h2 class="section-title" id="transactions-title">Account history.</h2><p class="section-copy">Review your recent transactions and account activity.</p></div>
+        <div class="locked-panel" id="history-lock">
+          <h3>Sign in to view account history</h3>
+          <p>Please sign in to access your complete transaction history.</p>
+          <a class="btn ghost" href="#login">Go to Sign In</a>
+        </div>
+
+        <div class="protected-content">
+        <div class="toolbar" role="search">
+          <div class="field"><label for="transaction-search">Search transactions</label><input id="transaction-search" type="search" placeholder="Search by description"></div>
+          <div class="field"><label for="transaction-type">Type</label><select id="transaction-type"><option value="all" selected="selected">All</option><option value="credit">Credits</option><option value="debit">Debits</option></select></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only">Recent Sunrise Bank transactions</caption>
+            <thead><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col">Type</th><th scope="col">Account</th><th scope="col">Amount</th></tr></thead>
+            <tbody id="transaction-body">
+              <tr data-type="credit"><td>06/15/2024</td><td>Payroll Deposit</td><td>Credit</td><td>Checking ****9361</td><td class="amount-credit">+$4,500.00</td></tr>
+              <tr data-type="debit"><td>06/12/2024</td><td>Utility Payment</td><td>Debit</td><td>Checking ****9361</td><td class="amount-debit">-$120.00</td></tr>
+              <tr data-type="debit"><td>06/10/2024</td><td>Online Purchase</td><td>Debit</td><td>Credit Card</td><td class="amount-debit">-$89.99</td></tr>
+              <tr data-type="credit"><td>06/05/2024</td><td>Transfer Received</td><td>Credit</td><td>Savings ****5678</td><td class="amount-credit">+$1,250.00</td></tr>
+              <tr data-type="debit"><td>06/01/2024</td><td>ATM Withdrawal</td><td>Debit</td><td>Checking ****9361</td><td class="amount-debit">-$200.00</td></tr>
+              <tr data-type="credit"><td>05/15/2024</td><td>Payroll Deposit</td><td>Credit</td><td>Checking ****9361</td><td class="amount-credit">+$4,500.00</td></tr>
+              <tr data-type="debit"><td>05/10/2024</td><td>Utility Payment</td><td>Debit</td><td>Checking ****9361</td><td class="amount-debit">-$120.00</td></tr>
+              <tr data-type="debit"><td>05/05/2024</td><td>Online Purchase</td><td>Debit</td><td>Credit Card</td><td class="amount-debit">-$89.99</td></tr>
+              <tr data-type="credit"><td>04/15/2024</td><td>Payroll Deposit</td><td>Credit</td><td>Checking ****9361</td><td class="amount-credit">+$4,500.00</td></tr>
+              <tr data-type="debit"><td>04/10/2024</td><td>Utility Payment</td><td>Debit</td><td>Checking ****9361</td><td class="amount-debit">-$120.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="message" id="transaction-count" aria-live="polite">10 transactions shown.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="planning" id="planning" aria-labelledby="planning-title">
+      <div class="container">
+        <div class="planning-grid">
+          <div class="section-head"><p class="section-label">Planning tool</p><h2 class="section-title" id="planning-title">Savings goal calculator.</h2><p class="section-copy">Calculate how much you need to save monthly to reach your financial goals.</p></div>
+          <form class="panel" id="savings-form">
+            <div class="field-grid">
+              <div class="field-row"><div class="field"><label for="goal-amount">Goal amount</label><input id="goal-amount" type="number" min="100" step="100" value="6000"></div><div class="field"><label for="current-savings">Current savings</label><input id="current-savings" type="number" min="0" step="100" value="1200"></div></div>
+              <div class="field"><label for="months">Months to goal</label><input id="months" type="range" min="3" max="36" value="12"><p class="form-note"><span id="months-output">12</span> months</p></div>
+              <div class="result-box" aria-live="polite"><div><p class="balance-label">Monthly savings needed</p><p class="result-value" id="monthly-result">$400.00</p></div></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-contact" id="login" aria-labelledby="login-title">
+      <div class="container">
+        <div class="login-contact-grid">
+          <form class="login-panel" id="login-form">
+            <div class="section-head"><p class="section-label">Online banking</p><h2 class="section-title" id="login-title">Sign in to your account.</h2><p class="section-copy">Access your accounts securely with your username and password.</p></div>
+            <div class="field-grid">
+              <div class="field"><label for="username">Username</label><input id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username"></div>
+              <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password"></div>
+              <button class="btn full" type="submit">Sign In</button>
+              <p class="message" id="login-message" aria-live="polite"></p>
+            </div>
+          </form>
+
+          <form class="contact-panel" id="contact" aria-labelledby="contact-title">
+            <div class="section-head"><p class="section-label">Contact us</p><h2 class="section-title" id="contact-title">Get in touch.</h2><p class="section-copy">Have questions? Our team is here to help you with any banking needs.</p></div>
+            <div class="field-grid">
+              <div class="field-row"><div class="field"><label for="full-name">Full name</label><input id="full-name" name="full-name" type="text" placeholder="Your name"></div><div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email"></div></div>
+              <div class="field"><label for="subject">Subject</label><input id="subject" name="subject" type="text" placeholder="How can we help?"></div>
+              <div class="field"><label for="message">Message</label><textarea id="message" name="message" placeholder="Your message"></textarea></div>
+              <button class="btn" type="submit">Send Message</button>
+              <p class="message" id="contact-message" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div><h2>Sunrise Bank</h2><p>Banking with the promise of a brighter tomorrow.</p><p>Email: support@sunrisebank.com</p><p>Phone: +1 (800) 555-0000</p></div>
+      <small>© 2026 Sunrise Bank. All rights reserved.</small>
+    </div>
+  </footer>
+
+  <script>
+    const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+    const menuToggle = document.querySelector(".menu-toggle");
+    const nav = document.querySelector("#primary-nav");
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+      menuToggle.setAttribute("aria-expanded", String(!isOpen));
+      menuToggle.setAttribute("aria-label", isOpen ? "Open menu" : "Close menu");
+      nav.classList.toggle("open", !isOpen);
+      document.body.classList.toggle("menu-open", !isOpen);
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", (event) => {
+        const target = document.querySelector(anchor.getAttribute("href"));
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Open menu");
+        nav.classList.remove("open");
+        document.body.classList.remove("menu-open");
+      });
+    });
+
+    const transferForm = document.querySelector("#transfer-form");
+    const transferMessage = document.querySelector("#transfer-message");
+
+    transferForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const amount = Number(document.querySelector("#transfer-amount").value);
+
+      if (!amount || amount <= 0) {
+        transferMessage.textContent = "Please enter a valid amount.";
+        transferMessage.className = "message error";
+        return;
+      }
+
+      transferMessage.textContent = "Transfers require approval from your inheritance lawyer. Please contact your inheritance lawyer.";
+      transferMessage.className = "message error";
+    });
+
+    const rows = Array.from(document.querySelectorAll("#transaction-body tr"));
+    const searchInput = document.querySelector("#transaction-search");
+    const typeSelect = document.querySelector("#transaction-type");
+    const transactionCount = document.querySelector("#transaction-count");
+
+    function filterTransactions() {
+      const query = searchInput.value.trim().toLowerCase();
+      const type = typeSelect.value;
+      let shown = 0;
+
+      rows.forEach((row) => {
+        const matchesQuery = row.textContent.toLowerCase().includes(query);
+        const matchesType = type === "all" || row.dataset.type === type;
+        const visible = matchesQuery && matchesType;
+        row.hidden = !visible;
+        if (visible) shown += 1;
+      });
+
+      transactionCount.textContent = shown + " transaction" + (shown === 1 ? "" : "s") + " shown.";
+    }
+
+    searchInput.addEventListener("input", filterTransactions);
+    typeSelect.addEventListener("change", filterTransactions);
+    filterTransactions();
+
+    const savingsForm = document.querySelector("#savings-form");
+    const goalAmount = document.querySelector("#goal-amount");
+    const currentSavings = document.querySelector("#current-savings");
+    const months = document.querySelector("#months");
+    const monthsOutput = document.querySelector("#months-output");
+    const monthlyResult = document.querySelector("#monthly-result");
+
+    function updateSavings() {
+      const goal = Math.max(0, Number(goalAmount.value));
+      const current = Math.max(0, Number(currentSavings.value));
+      const monthCount = Math.max(1, Number(months.value));
+      const needed = Math.max(0, goal - current);
+      monthsOutput.textContent = monthCount;
+      monthlyResult.textContent = money.format(needed / monthCount);
+    }
+
+    savingsForm.addEventListener("input", updateSavings);
+    updateSavings();
+
+    const loginForm = document.querySelector("#login-form");
+    const loginMessage = document.querySelector("#login-message");
+
+    loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const username = document.querySelector("#username").value.trim();
+      const password = document.querySelector("#password").value.trim();
+
+      if (!username || !password) {
+        loginMessage.textContent = "Please enter both username and password.";
+        loginMessage.className = "message error";
+        return;
+      }
+
+      document.body.classList.add("is-signed-in");
+      loginMessage.textContent = "Welcome back! You have been successfully signed in.";
+      loginMessage.className = "message success";
+      loginForm.reset();
+      document.querySelector("#dashboard").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    const contactForm = document.querySelector("#contact");
+    const contactMessage = document.querySelector("#contact-message");
+
+    contactForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const requiredFields = ["#full-name", "#email", "#subject", "#message"].map((selector) => document.querySelector(selector));
+      const missing = requiredFields.some((field) => !field.value.trim());
+
+      if (missing) {
+        contactMessage.textContent = "Please fill out all fields.";
+        contactMessage.className = "message error";
+        return;
+      }
+
+      contactMessage.textContent = "Thank you! Your message has been sent.";
+      contactMessage.className = "message success";
+      contactForm.reset();
+    });
+  </script>
+
+</body></html>
